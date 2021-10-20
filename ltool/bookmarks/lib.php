@@ -213,7 +213,6 @@ function ltool_bookmarks_render_template($templatecontent) {
  */
 function check_page_bookmarks_exist($contextid, $pageurl, $userid) {
     global $DB;
-
     $pagebookmarks = false;
     if ($DB->record_exists('learningtools_bookmarks', array('contextid' => $contextid,
         'pageurl' => $pageurl, 'userid' => $userid))) {
