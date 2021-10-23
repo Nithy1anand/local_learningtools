@@ -128,7 +128,7 @@ function user_save_bookmarks($contextid, $data) {
             // Add event to user create the bookmark.
             $event = \ltool_bookmarks\event\ltbookmarks_created::create([
                 'objectid' => $bookmarksrecord,
-                'userid' => $data['userid'],
+                'userid' => $data['user'],
                 'courseid' => $eventcourseid,
                 'context' => $context,
                 'other' => [
