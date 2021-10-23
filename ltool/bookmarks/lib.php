@@ -152,7 +152,7 @@ function user_save_bookmarks($contextid, $data) {
                 'userid' => $data['user'],
                 'courseid' => $eventcourseid,
                 'context' => $context,
-                'relateuserid' => $relateduserid,
+                'relateduserid' => $relateduserid,
                 'other' => [
                     'pagetype' => $data['pagetype'],
                 ]
