@@ -24,8 +24,6 @@
 
 use core_user\output\myprofile\tree;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Defines learningtools nodes for my profile navigation tree.
  *
@@ -58,13 +56,11 @@ function local_learningtools_myprofile_navigation(tree $tree, $user, $iscurrentu
  * @return navigation_node Returns the question branch that was added
  */
 function local_learningtools_extend_settings_navigation($settingnav, $context) {
-
     global $PAGE, $CFG;
-
     $context = context_system::instance();
     $ltoolsjs = array();
     // Content of fab button html.
-    $fabbuttonhtml = json_encode(get_learningtools_info());
+    $fabbuttonhtml = json_encode(local_learningtools_get_learningtools_info());
     $ltoolsjs['disappertimenotify'] = get_config('local_learningtools', 'notificationdisapper');
     $PAGE->requires->data_for_js('ltools', $ltoolsjs);
     $PAGE->requires->data_for_js('fabbuttonhtml', $fabbuttonhtml, true);
@@ -73,7 +69,7 @@ function local_learningtools_extend_settings_navigation($settingnav, $context) {
         $loggedin = true;
     }
     $viewcapability = array('loggedin' => $loggedin);
-    $PAGE->requires->js_call_amd('local_learningtools/learningtools', 'init', $viewcapability);
+    $PAGE->requires->js_call_amd('local_learningtools/learningtoolsinfo', 'init', $viewcapability);
     // List of subplugins.
     // Load available subplugins javascript.
     $subplugins = local_learningtools_get_subplugins();
@@ -93,25 +89,25 @@ function local_learningtools_extend_settings_navigation($settingnav, $context) {
  * @param object $record list of the page info.
  * @return object instance object.
  */
-function check_instanceof_block($record) {
+function local_learningtools_check_instanceof_block($record) {
 
     $data = new stdClass;
-    if ($record->contextlevel == 10) { // System level.
+    if ($record->contextlevel == CONTEXT_SYSTEM) { // System level.
         $data->instance = 'system';
-    } else if ($record->contextlevel == 30) { // User level.
+    } else if ($record->contextlevel == CONTEXT_USER) { // User level.
         $data->instance = 'user';
-    } else if ($record->contextlevel == 50) {  // Course level.
+    } else if ($record->contextlevel == CONTEXT_COURSE) {  // Course level.
         $data->instance = 'course';
         $data->courseid = $record->course;
         $data->contextid = $record->contextid;
 
-    } else if ($record->contextlevel == 70) { // Mod level.
+    } else if ($record->contextlevel == CONTEXT_MODULE) { // Mod level.
         $data->instance = 'mod';
         $data->courseid = $record->course;
         $data->contextid = $record->contextid;
-        $data->coursemodule = get_coursemodule_id($record);
+        $data->coursemodule = local_learningtools_get_coursemodule_id($record);
 
-    } else if ($record->contextlevel == 80) { // Context blocklevel.
+    } else if ($record->contextlevel == CONTEXT_BLOCK) { // Context blocklevel.
         $data->instance = 'block';
     } else {
         $data->instance = '';
@@ -125,13 +121,13 @@ function check_instanceof_block($record) {
  * @param int $contextlevel context level
  * @return int course module id
  */
-function get_moduleid($contextid, $contextlevel) {
+function local_learningtools_get_moduleid($contextid, $contextlevel) {
     $coursemodule = 0;
-    if ($contextlevel == 70) {
+    if ($contextlevel == CONTEXT_MODULE) {
         $record = new stdClass;
         $record->contextid = $contextid;
         $record->contextlevel = $contextlevel;
-        $coursemodule = get_coursemodule_id($record);
+        $coursemodule = local_learningtools_get_coursemodule_id($record);
     }
     return $coursemodule;
 }
@@ -141,7 +137,7 @@ function get_moduleid($contextid, $contextlevel) {
  * @param stdclass $record list of the page info.
  * @return int course module id.
  */
-function get_coursemodule_id($record) {
+function local_learningtools_get_coursemodule_id($record) {
     global $DB;
 
     $contextinfo = $DB->get_record('context', array('id' => $record->contextid, 'contextlevel' => $record->contextlevel));
@@ -156,7 +152,7 @@ function get_coursemodule_id($record) {
  * @param int $usercourseid  course id.
  * @return array list of the course info.
  */
-function get_courses_name($courses, $url = '', $selectcourse = 0, $userid= 0, $usercourseid = 0) {
+function local_learningtools_get_courses_name($courses, $url = '', $selectcourse = 0, $userid= 0, $usercourseid = 0) {
     $courseids = [];
     $courseinfo = [];
     $courseids = $courses;
@@ -197,7 +193,7 @@ function get_courses_name($courses, $url = '', $selectcourse = 0, $userid= 0, $u
  * @param int $courseid course id
  * @return string course name
  */
-function get_course_name($courseid) {
+function local_learningtools_get_course_name($courseid) {
 
     $course = get_course($courseid);
     $course = new core_course_list_element($course);
@@ -209,7 +205,7 @@ function get_course_name($courseid) {
  * @param int $courseid course id.
  * @return string category name.
  */
-function get_course_categoryname($courseid) {
+function local_learningtools_get_course_categoryname($courseid) {
 
     $course = get_course($courseid);
     $category = \core_course_category::get($course->category);
@@ -222,7 +218,7 @@ function get_course_categoryname($courseid) {
  * @param bool $mod return which type of name
  * @return string modulename | instance name
  */
-function get_module_name($data, $mod = false) {
+function local_learningtools_get_module_name($data, $mod = false) {
     global $DB;
     $coursemoduleinfo = $DB->get_record('course_modules', array('id' => $data->coursemodule));
     $moduleinfo = $DB->get_record('modules', array('id' => $coursemoduleinfo->module));
@@ -241,7 +237,7 @@ function get_module_name($data, $mod = false) {
  * @param int $modid coursemodule id
  * @return string|bool section name.
  */
-function get_mod_section($courseid, $modid) {
+function local_learningtools_get_mod_section($courseid, $modid) {
     global $DB;
 
     $sections = $DB->get_records('course_sections', array('course' => $courseid));
@@ -306,7 +302,7 @@ function local_learningtools_get_subplugins() {
  * Display fab button html.
  * @return string fab button html content.
  */
-function get_learningtools_info() {
+function local_learningtools_get_learningtools_info() {
     global $PAGE, $SITE, $USER;
 
     $content = '';
@@ -337,52 +333,121 @@ function get_learningtools_info() {
             }
         }
     }
-
-    $content .= html_writer::start_tag('div', array('class' => 'floating-button'));
-    $content .= html_writer::start_tag('div', array('class' => 'list-learningtools'));
-
+    $contentinner = '';
     // Get list of ltool sub plugins.
     $subplugins = local_learningtools_get_subplugins();
     $context = context_system::instance();
+    $stickytools = '';
     if (!empty($subplugins)) {
         foreach ($subplugins as $shortname => $toolobj) {
             $capability = 'ltool/'.$toolobj->shortname.':create'. $toolobj->shortname;
             if ($toolobj->contextlevel == 'system') {
                 if (has_capability($capability, $context)) {
-                    $content .= $toolobj->render_template();
+                    if (get_config('ltool_' . $toolobj->shortname, 'sticky')) {
+                        $stickytools .= $toolobj->render_template();
+                    } else if (get_config('local_learningtools', 'showactive')) {
+                        if (method_exists($toolobj, 'tool_active_condition')) {
+                            if ($toolobj->tool_active_condition()) {
+                                $stickytools .= $toolobj->tool_active_condition();
+                            } else {
+                                $contentinner .= $toolobj->render_template();
+                            }
+                        }
+                    } else {
+                        $contentinner .= $toolobj->render_template();
+                    }
                 }
             } else {
-                $content .= $toolobj->render_template();
+                if (get_config('ltool_' . $toolobj->shortname, 'sticky')) {
+                    $stickytools .= $toolobj->render_template();
+                } else if (get_config('local_learningtools', 'showactive')) {
+                    $activetool = $toolobj->render_template();
+                    if (method_exists($toolobj, 'tool_active_condition')) {
+                        if ($toolobj->tool_active_condition()) {
+                            $stickytools .= $toolobj->tool_active_condition();
+                            $activetool = '';
+                        }
+                    }
+                    $contentinner .= $activetool;
+                } else {
+                    $contentinner .= $toolobj->render_template();
+                }
             }
         }
     }
+    $stickytoolstatus = local_learningtools_get_stickytool_status();
+    $stickyclass = '';
+    $fabiconclass = "fa fa-magic";
+    if ($stickytoolstatus && !empty($stickytools)) {
+        $fabiconclass = "fa fa-angle-double-up";
+        $stickyclass = 'sticky-tool';
+    }
     $fabbackiconcolor = get_config('local_learningtools', 'fabiconbackcolor');
     $fabiconcolor = get_config('local_learningtools', 'fabiconcolor');
+    $content .= html_writer::start_tag('div', array('class' => 'learningtools-action-info'));
+    $content .= html_writer::start_tag('div', array('class' => "floating-button $stickyclass"));
+    $content .= html_writer::start_tag('div', array('class' => 'list-learningtools'));
+    $content .= $contentinner;
     $content .= html_writer::end_tag('div');
             $content .= html_writer::start_tag('button', array("class" => "btn btn-primary",
             'id' => 'tool-action-button', 'style' => "background:$fabbackiconcolor;") );
-    $content .= html_writer::start_tag('i', array('class' => 'fa fa-magic', 'style' => "color:$fabiconcolor;"));
+    $content .= html_writer::start_tag('i', array('class' => $fabiconclass, 'style' => "color:$fabiconcolor;"));
     $content .= html_writer::end_tag('i');
     $content .= html_writer::end_tag("button");
+        $content .= html_writer::start_tag('div', array('class' => 'sticky-tools-list'));
+        $content .= $stickytools;
+        $content .= html_writer::end_tag('div');
+    $content .= html_writer::end_tag('div');
     $content .= html_writer::end_tag('div');
     return $content;
 }
+
+/**
+ * Get sticky tools.
+ * @return void
+ */
+function local_learningtools_get_stickytool_status() {
+    $subplugins = local_learningtools_get_subplugins();
+    $stickystatus = false;
+    if (!empty($subplugins)) {
+        foreach ($subplugins as $shortname => $toolobj) {
+            $capability = 'ltool/'.$toolobj->shortname.':create'. $toolobj->shortname;
+            if ($toolobj->contextlevel == 'system') {
+                if (has_capability($capability, context_system::instance())) {
+                    if (get_config('ltool_' . $toolobj->shortname, 'sticky') ||
+                        get_config('local_learningtools', 'showactive')) {
+                        $stickystatus = true;
+                    }
+                }
+            } else {
+                if (get_config('ltool_' . $toolobj->shortname, 'sticky') ||
+                    get_config('local_learningtools', 'showactive')) {
+                    $stickystatus = true;
+                }
+            }
+        }
+    }
+    return $stickystatus;
+}
+
 
 /**
  * Get the students in course.
  * @param int $courseid course id
  * @return array students user ids.
  */
-function get_students_incourse($courseid) {
+function local_learningtools_get_students_incourse($courseid) {
     global $DB;
     $users = [];
-    $student = $DB->get_record('role', array('shortname' => 'student'));
-    if ($student) {
+    $studentroleids = array_keys(get_archetype_roles('student'));
+    if ($studentroleids) {
         $coursecontext = context_course::instance($courseid);
-        $coursestudents = get_role_users($student->id, $coursecontext);
-        if (!empty($coursestudents)) {
-            foreach ($coursestudents as $coursestudent) {
-                $users[] = $coursestudent->id;
+        foreach ($studentroleids as $role) {
+            $coursestudents = get_role_users($role, $coursecontext);
+            if (!empty($coursestudents)) {
+                foreach ($coursestudents as $coursestudent) {
+                    $users[] = $coursestudent->id;
+                }
             }
         }
     }
@@ -395,12 +460,12 @@ function get_students_incourse($courseid) {
  * @param string $capability
  * @return object|bool
  */
-function is_parentforchild(int $childuserid, string $capability='') {
+function local_learningtools_is_parentforchild(int $childuserid, string $capability='') {
     global $USER;
     $usercontext = \context_user::instance($childuserid); // USER - child id.
     $usercontextroles = get_user_roles($usercontext, $USER->id); // Loggedin - parent.
     if (!empty($capability)) {
-        return has_viewtool_capability_role($usercontextroles, $capability);
+        return local_learningtools_has_viewtool_capability_role($usercontextroles, $capability);
     }
     return (!empty($usercontextroles)) ? $usercontextroles : false;
 }
@@ -411,7 +476,7 @@ function is_parentforchild(int $childuserid, string $capability='') {
  * @param string $capability acces capability.
  * @return bool stauts
  */
-function has_viewtool_capability_role($assignedroles, string $capability) {
+function local_learningtools_has_viewtool_capability_role($assignedroles, string $capability) {
     $roles = [];
     if (empty($assignedroles)) {
         return false;
@@ -429,9 +494,9 @@ function has_viewtool_capability_role($assignedroles, string $capability) {
  * @param object $row list of the tool record
  * @return string view html
  */
-function get_instance_tool_view_url($row) {
+function local_learningtools_get_instance_tool_view_url($row) {
     global $OUTPUT;
-    $data = check_instanceof_block($row);
+    $data = local_learningtools_check_instanceof_block($row);
     if (!isset($data->instance)) {
         return '';
     }
@@ -452,9 +517,9 @@ function get_instance_tool_view_url($row) {
  * @param int $courseid related course id
  * @return string view html
  */
-function get_eventlevel_courseid($context, $courseid) {
+function local_learningtools_get_eventlevel_courseid($context, $courseid) {
     $course = 0;
-    if ($context->contextlevel == 50 || $context->contextlevel == 70) {
+    if ($context->contextlevel == CONTEXT_COURSE || $context->contextlevel == CONTEXT_MODULE) {
         return $courseid;
     } else {
         return $course;
@@ -466,17 +531,18 @@ function get_eventlevel_courseid($context, $courseid) {
  * @param string $plugin plugin name
  * @return void
  */
-function add_learningtools_plugin($plugin) {
+function local_learningtools_add_learningtools_plugin($plugin) {
     global $DB;
     $strpluginname = get_string('pluginname', 'ltool_' . $plugin);
     if (!$DB->record_exists('local_learningtools_products', array('shortname' => $plugin)) ) {
-        $lasttool = $DB->get_record_sql(' SELECT id FROM {local_learningtools_products} ORDER BY id DESC LIMIT 1', null);
+        $existrecords = $DB->get_records('local_learningtools_products', null);
+        $maxrecord = $DB->get_record_sql('SELECT MAX(sort) AS value FROM {local_learningtools_products}', null);
+        $sortval = !empty($existrecords) ? $maxrecord->value + 1 : 1;
         $record = new stdClass;
         $record->shortname = $plugin;
         $record->name = $strpluginname;
         $record->status = 1;
-        $lasttoolcount = $DB->count_records('local_learningtools_products');
-        $record->sort = (!empty($lasttool)) ? $lasttoolcount + 1 : 1;
+        $record->sort = $sortval;
         $record->timecreated = time();
         $DB->insert_record('local_learningtools_products', $record);
     }
@@ -487,18 +553,10 @@ function add_learningtools_plugin($plugin) {
  * @param string $plugin ltool plugin shortname
  * @return void
  */
-function delete_ltool_table($plugin) {
+function local_learningtools_delete_ltool_table($plugin) {
     global $DB;
-
     if ($DB->record_exists('local_learningtools_products', array('shortname' => $plugin)) ) {
         $DB->delete_records('local_learningtools_products', array('shortname' => $plugin));
-    }
-
-    $table = "learningtools_". $plugin;
-    $dbman = $DB->get_manager();
-    if ($dbman->table_exists($table)) {
-        $droptable = new xmldb_table($table);
-        $dbman->drop_table($droptable);
     }
 }
 
@@ -508,11 +566,11 @@ function delete_ltool_table($plugin) {
  * @param object $cm course module id.
  * @return string pageurl
  */
-function clean_mod_assign_userlistid($pageurl, $cm) {
+function local_learningtools_clean_mod_assign_userlistid($pageurl, $cm) {
     if (!empty($cm->id)) {
         $data = new stdClass;
         $data->coursemodule = $cm->id;
-        $modname = get_module_name($data, true);
+        $modname = local_learningtools_get_module_name($data, true);
         if ($modname == 'assign') {
             $parsed = parse_url($pageurl);
             if (isset($parsed['query'])) {
@@ -530,4 +588,35 @@ function clean_mod_assign_userlistid($pageurl, $cm) {
     } else {
         return $pageurl;
     }
+}
+
+/**
+ * Is the event visible?
+ *
+ * This is used to determine global visibility of an event in all places throughout Moodle.
+ *
+ * @param calendar_event $event
+ * @param int $requestinguserid User id to use for all capability checks, etc. Set to 0 for current user (default).
+ * @return bool Returns true if the event is visible to the current user, false otherwise.
+ */
+function local_learningtools_core_calendar_is_event_visible($event, $requestinguserid) {
+    global $DB;
+    $userid = $DB->get_field('event', 'userid', ['id' => $event->id]);
+    return ($userid == $requestinguserid) ? true : false;
+}
+
+/**
+ * Can access the Course tool for current page.
+ *
+ * @return void
+ */
+function local_learningtools_can_visible_tool_incourse() {
+    global $SITE, $PAGE, $USER;
+    $access = false;
+    if (!empty($PAGE->course->id) && $PAGE->course->id != $SITE->id) {
+        if (can_access_course($PAGE->course, $USER, '', true)) {
+            $access = true;
+        }
+    }
+    return $access;
 }

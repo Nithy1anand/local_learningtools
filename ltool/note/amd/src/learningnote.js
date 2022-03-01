@@ -15,7 +15,7 @@
 
 /**
  * Notes ltool define js.
- * @package   ltool_note
+ * @module   ltool_note
  * @category  Classes - autoloading
  * @copyright 2021, bdecent gmbh bdecent.de
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -117,7 +117,7 @@ define(['jquery', 'core/modal_factory', 'core/str', 'core/fragment', 'core/modal
                             var url = M.cfg.wwwroot + "/local/learningtools/ltool/note/pop_out.php?contextid=" +
                             params.contextid + "&pagetype=" + params.pagetype + "&contextlevel=" + params.contextlevel + "&course="
                             + params.course + "&user=" + params.user + "&pageurl=" + pageurljson + "&pagetitle=" + params.pagetitle
-                            + "&heading=" + params.heading;
+                            + "&heading=" + params.heading + "&sesskey=" + params.sesskey;
                             modal.hide();
                             window.open(url, '_blank');
                         });

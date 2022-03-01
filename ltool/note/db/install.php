@@ -21,8 +21,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * ltool_note install function.
  *
@@ -32,5 +30,5 @@ function xmldb_ltool_note_install() {
     global $CFG;
     require_once($CFG->dirroot. '/local/learningtools/lib.php');
     $plugin = 'note';
-    add_learningtools_plugin($plugin);
+    local_learningtools_add_learningtools_plugin($plugin);
 }

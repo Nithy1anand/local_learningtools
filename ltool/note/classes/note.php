@@ -66,7 +66,7 @@ class note extends \local_learningtools\learningtools {
      */
     public function get_tool_iconbackcolor() {
 
-        return '#17a2b8';
+        return '#343a40';
     }
 
     /**
@@ -82,13 +82,13 @@ class note extends \local_learningtools\learningtools {
         $args['contextid'] = $PAGE->context->id;
         $args['pagetype'] = $PAGE->pagetype;
         $args['user'] = $USER->id;
-        $pageurl = clean_mod_assign_userlistid($PAGE->url->out(false), $PAGE->cm);
+        $pageurl = local_learningtools_clean_mod_assign_userlistid($PAGE->url->out(false), $PAGE->cm);
         $args['pageurl'] = $pageurl;
         $data = [];
         $data['name'] = $this->get_tool_name();
         $data['icon'] = $this->get_tool_icon();
         $data['ltnote'] = true;
-        $data['pagenotes'] = get_userpage_countnotes($args);
+        $data['pagenotes'] = ltool_note_get_userpage_countnotes($args);
         $data['notehovername'] = get_string('createnote', 'local_learningtools');
         $data['iconbackcolor'] = get_config("ltool_{$this->shortname}", "{$this->shortname}iconbackcolor");
         $data['iconcolor'] = get_config("ltool_{$this->shortname}", "{$this->shortname}iconcolor");
@@ -102,7 +102,7 @@ class note extends \local_learningtools\learningtools {
      */
     public function load_js() {
         // Load note tool js configuration.
-        load_notes_js_config();
+        ltool_note_load_js_config();
     }
 
     /**
@@ -113,6 +113,24 @@ class note extends \local_learningtools\learningtools {
     public function render_template() {
         $data = $this->get_tool_records();
         return ltool_note_render_template($data);
+    }
+
+    /**
+     * Note active tool status.
+     * @return string Note tool fab button html.
+     */
+    public function tool_active_condition() {
+        global $PAGE, $USER;
+        $args = [];
+        $args['contextid'] = $PAGE->context->id;
+        $args['pagetype'] = $PAGE->pagetype;
+        $args['user'] = $USER->id;
+        $pageurl = local_learningtools_clean_mod_assign_userlistid($PAGE->url->out(false), $PAGE->cm);
+        $args['pageurl'] = $pageurl;
+        $pagenotes = ltool_note_get_userpage_countnotes($args);
+        if ($pagenotes) {
+            return $this->render_template();
+        }
     }
 
 }

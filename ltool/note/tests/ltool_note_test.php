@@ -21,13 +21,11 @@
  * @copyright bdecent GmbH 2021
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined( 'MOODLE_INTERNAL') || die(' No direct access ');
-
+namespace ltool_note;
 /**
  * Note subplugin for learningtools phpunit test cases defined.
  */
-class ltool_note_testcase extends advanced_testcase {
+class ltool_note_test extends \advanced_testcase {
 
     /**
      * Create custom page instance and set admin user as loggedin user.
@@ -46,7 +44,7 @@ class ltool_note_testcase extends advanced_testcase {
         $page->set_title('Course: Course 1');
         $page->set_pagelayout('standard');
         $page->set_pagetype('course-view');
-        $page->set_url(new moodle_url('/course/view.php', ['id' => $course->id]));
+        $page->set_url(new \moodle_url('/course/view.php', ['id' => $course->id]));
         $this->page = $page;
     }
 
@@ -61,7 +59,6 @@ class ltool_note_testcase extends advanced_testcase {
         $tool = $DB->get_record('local_learningtools_products', ['shortname' => 'note']);
         $data = $this->get_note_info($toolobj, $tool);
         $data['ltnoteeditor'] = 'Test note';
-        $_POST['sesskey'] = sesskey();
         return $data;
     }
 
@@ -74,7 +71,7 @@ class ltool_note_testcase extends advanced_testcase {
 
         $data = $this->create_note();
         $sink = $this->redirectEvents();
-        user_save_notes($this->context->id, $data);
+        ltool_note_user_save_notes($this->context->id, $data);
         $events = $sink->get_events();
         $event = reset($events);
         $this->assertInstanceOf('\ltool_note\event\ltnote_created', $event);
@@ -89,18 +86,18 @@ class ltool_note_testcase extends advanced_testcase {
     public function test_note_count(): void {
 
         $data = $this->create_note();
-        user_save_notes($this->context->id, $data);
+        ltool_note_user_save_notes($this->context->id, $data);
         $data1 = $this->create_note();
-        user_save_notes($this->context->id, $data1);
+        ltool_note_user_save_notes($this->context->id, $data1);
         $args = [
             'contextid' => $data['contextid'],
             'pagetype' => $data['pagetype'],
             'user' => $data['user'],
             'pageurl' => $data['pageurl']
         ];
-        $count = get_userpage_countnotes($args);
+        $count = ltool_note_get_userpage_countnotes($args);
         $this->assertEquals(2, $count);
-        $notes = check_instanceof_block((object) $data);
+        $notes = local_learningtools_check_instanceof_block((object) $data);
         $this->assertEquals('course', $notes->instance);
     }
 
@@ -115,12 +112,12 @@ class ltool_note_testcase extends advanced_testcase {
         $data = str_replace('amp;', '', http_build_query($data));
         // Redirect all events. Created event must trigger when the note saved.
         $sink = $this->redirectEvents();
-        $notecount = ltool_note\external::save_usernote($this->context->id, $data);
+        $notecount = \ltool_note\external::save_usernote($this->context->id, $data);
         $events = $sink->get_events();
         $event = reset($events);
         $this->assertInstanceOf('\ltool_note\event\ltnote_created', $event);
         $this->assertEquals($this->context, $event->get_context());
-        $notecount = ltool_note\external::save_usernote($this->context->id, $data);
+        $notecount = \ltool_note\external::save_usernote($this->context->id, $data);
         $this->assertEquals(2, $notecount);
     }
 

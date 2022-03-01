@@ -34,7 +34,7 @@ $string['notificationdisappertitle'] = "Notification disapper";
 $string['notificationdisapperdesc'] = "Use this option to set the notification disapper time between each Learning Tools save the notification. Value is in milliseconds (i.e 1 second = 1000 milliseconds)";
 $string['popout'] = "Pop Out";
 $string['viewreports'] = "View reports";
-$string['learningtoolssettings'] = "Learning Tools Settings";
+$string['learningtoolssettings'] = "General settings";
 $string['ltoolsusermenu'] = "Display Learning Tools in usermenu bar";
 $string['ltoolusermenu_help'] = "List of menus available to display in the user menu. copy and paste the  below given menu tools path in user menu items. Go to the Appearence->Themes->Theme settings in user menu items. ";
 $string['privacy:metadata'] = 'Learning tools parent plugin don\'t store any user-related data, The learning tool sub plugins are stores the users data individually.';
@@ -54,6 +54,9 @@ $string['visiblecategories'] = "Select Visible Categories";
 $string['disablemodules'] = "Select Disable activities to hide Learning Tools";
 $string['enabledisablemodules'] = "Enable Learning Tools to hide activities";
 $string['fabbuttonvisible_desc'] = 'You can decide where the Learning Tools shall be available.';
+$string['sticky'] = "Sticky";
+$string['alwaysactive'] = "Always show active tools";
+
 
 $string['bookmarksusermenu'] = "Display Bookmarks tool in user menu";
 $string['bookmarksusermenu_help'] = "bookmarks,local_learningtools|/local/learningtools/ltool/bookmarks/list.php|b/bookmark-new";
@@ -171,6 +174,70 @@ $string['noactivity'] = "No force activiy";
 $string['successforceactivityusers'] = "Successfully added the force activity in the course";
 
 // Information tool.
-
 $string['information'] = "Information";
 $string['courseinfo'] = "Course Information";
+
+// Focus tool.
+$string['focus'] = "Focus";
+$string['focusmodecss'] = "Customize Focus Mode";
+$string['focusmode'] = "Focus mode";
+
+// Css tool.
+$string['css'] = "Css";
+$string['coursecss'] = "Implement Course Css";
+$string['customstyles'] = "Custom styles";
+$string['coursecustomstyle'] = 'Custom styles for {$a->name} {$a->help}';
+$string['parsecustomstyles_help'] = "Use this field to provide CSS code which will be injected at
+the end of the style sheet for all pages in the current course.";
+$string['parsecustomstyles'] = "Use this field to provide CSS code which will be injected at
+the end of the style sheet for all pages in the current course.";
+
+// Schedule tool.
+$string['schedule'] = "Schedule";
+$string['visitpage'] = "Visit page";
+
+// Time management.
+
+$string['timemanagement'] = 'Time management';
+$string['timemanagementheader'] = 'Time management for {$a->name}';
+$string['print'] = "Print";
+$string['sendmessage'] = "Send message";
+$string['viewprofile'] = "View profile";
+$string['managedates'] = "Manage dates";
+$string['activities'] = "activities";
+$string['today'] = "Today";
+$string['expectstarton'] = "should be started";
+$string['expectdueon'] = "should be completed";
+$string['open'] = "Open";
+$string['resume'] = "Resume";
+$string['review'] = "Review";
+$string['receivegrade'] = "Receive grade";
+$string['completeactivity'] = "Complete activity";
+$string['exuserenrollment'] = "example user enrollment";
+$string['courseduedate'] = "Course due date";
+$string['none'] = "None";
+$string['after'] = "After";
+$string['date'] = "Date";
+$string['hours'] = "Hours";
+$string['days'] = "Days";
+$string['months'] = "Months";
+$string['years'] = "Years";
+$string['startdate'] = "Start date";
+$string['duedate'] = "Due date";
+$string['uponenroll'] = "Upon enrollment";
+$string['open'] = "Open";
+$string['saveandgen'] = "Save and generate calendar entries";
+$string['cancel'] = "Cancel";
+$string['enablecompletiontrackmsg'] = "Turn on completion tracking to use Time Management.";
+$string['enrolluserscourse'] = "Please enroll at least one user to use Time Management.";
+$string['enrolldurationstr'] = "Enrollment duration";
+$string['courseprogress'] = "Course progress";
+$string['coursecompdate'] = "Course completion date";
+$string['progress'] = "Progress";
+$string['cmpdate'] = "Completion date";
+$string['managetimemanagment'] = "Manage dates reports";
+$string['gotocourse'] = "Go to course";
+$string['baseformat'] = '%B %d, %Y, %I:%M %p';
+$string['strftimemonthdateyear'] = '%B, %dth %Y';
+$string['strftimeyearmonth'] = '%Y/%m/%d';
+$string['strftimemonthnamedate'] = '%B %d, %Y';

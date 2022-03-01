@@ -25,7 +25,6 @@
 
 namespace ltool_bookmarks\event;
 
-defined('MOODLE_INTERNAL') || die();
 /**
  * Bookmarks tool delete the event.
  */
@@ -36,7 +35,7 @@ class ltbookmarks_deleted extends \core\event\base {
      */
     protected function init() {
 
-        $this->data['objecttable'] = 'learningtools_bookmarks';
+        $this->data['objecttable'] = 'ltool_bookmarks_data';
         $this->data['crud'] = 'r';
         $this->data['edulevel'] = self::LEVEL_OTHER;
     }

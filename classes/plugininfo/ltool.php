@@ -23,9 +23,9 @@
  */
 namespace local_learningtools\plugininfo;
 
-defined('MOODLE_INTERNAL') || die();
-
-use core\plugininfo\base, part_of_admin_tree, admin_settingpage;
+use core\plugininfo\base;
+use part_of_admin_tree;
+use admin_settingpage;
 
 /**
  * Ltools subplugin define classes.
@@ -93,6 +93,16 @@ class ltool extends base {
         if ($page) {
             $ADMIN->add($parentnodename, $page);
         }
+    }
+
+    /**
+     * Pre-uninstall hook.
+     */
+    public function uninstall_cleanup() {
+        global $CFG;
+        require_once($CFG->dirroot. "/local/learningtools/lib.php");
+        local_learningtools_delete_ltool_table($this->name);
+        parent::uninstall_cleanup();
     }
 
 }

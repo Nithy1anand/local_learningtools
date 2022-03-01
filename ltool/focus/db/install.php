@@ -15,22 +15,22 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Define uninstall function
- * @package    ltool_bookmarks
+ * Define install function
+ * @package    ltool_focus
  * @copyright  bdecent GmbH 2021
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
- * ltool_bookmarks uninstall function.
+ * ltool_focus install function.
  *
  * @return void
  */
-function xmldb_ltool_bookmarks_uninstall() {
+function xmldb_ltool_focus_install() {
     global $CFG;
     require_once($CFG->dirroot. '/local/learningtools/lib.php');
-    $plugin = 'bookmarks';
-    delete_ltool_table($plugin);
+    require_once($CFG->dirroot. '/local/learningtools/ltool/focus/lib.php');
+    $plugin = 'focus';
+    ltool_focus_create_focus_temp_cssfile();
+    local_learningtools_add_learningtools_plugin($plugin);
 }

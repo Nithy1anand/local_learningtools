@@ -15,22 +15,28 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Define uninstall function
- * @package    ltool_note
- * @copyright  bdecent GmbH 2021
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * Privacy implementation for Focus learning tools subplugin.
+ *
+ * @package   ltool_focus
+ * @copyright 2021, bdecent gmbh bdecent.de
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
+namespace ltool_focus\privacy;
 
 /**
- * ltool_note uninstall function.
- *
- * @return void
+ * The ltool_focus sub plugin does not store any data.
  */
-function xmldb_ltool_note_uninstall() {
-    global $CFG;
-    require_once($CFG->dirroot. '/local/learningtools/lib.php');
-    $plugin = 'note';
-    delete_ltool_table($plugin);
+class provider implements \core_privacy\local\metadata\null_provider {
+
+    /**
+     * Get the language string identifier with the component's language
+     * file to explain why this plugin stores no data.
+     *
+     * @return  string
+     */
+    public static function get_reason() : string {
+
+        return 'privacy:metadata';
+    }
 }
+

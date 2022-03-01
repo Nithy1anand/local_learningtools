@@ -15,25 +15,21 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Define uninstall function
- * @package    local_learningtools
+ * Define install function
+ * @package    ltool_schedule
  * @copyright  bdecent GmbH 2021
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
- * local_learningtools uninstall function.
+ * ltool_schedule install function.
  *
  * @return void
  */
-function xmldb_local_learningtools_uninstall() {
-    global $DB;
-    $table = "local_learningtools_products";
-    $dbman = $DB->get_manager();
-    if ($dbman->table_exists($table)) {
-        $droptable = new xmldb_table($table);
-        $dbman->drop_table($droptable);
-    }
+function xmldb_ltool_schedule_install() {
+    global $CFG;
+    require_once($CFG->dirroot. '/local/learningtools/lib.php');
+    $plugin = 'schedule';
+    local_learningtools_add_learningtools_plugin($plugin);
 }
+
